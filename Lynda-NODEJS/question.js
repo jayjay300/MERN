@@ -1,11 +1,4 @@
-const readline = require("readline");
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-
-
-});
+const collectAnswers = require("./lib/collectanswers");
 
 const questions = [
     "What's your name? ",
@@ -14,24 +7,14 @@ const questions = [
 
 ];
 
-const collectAnswers = (questions,done) => {
-    const answers = [];
-    const [firstQuestion] = questions;
-    const questionAnswered = answer => {
-        answers.push(answer);
-        if(answers.length < questions.length){
-            rl.question(questions[answers.length], questionAnswered);
-        }else{
-            done(answers);
-        }
-    }
-   // done(answers);
+const answerEvents = collectAnswers(questions);
 
-    rl.question(firstQuestion, questionAnswered);
-};
+answerEvents.on("answer",answer => console.log(`question answered: ${answer}`));
 
-collectAnswers(questions, answers =>{
+answerEvents.on("complete",answers =>{
     console.log("Thank you! ");
     console.log(answers);
-    process.exit();
+    
 });
+
+answerEvents.on("complete", () => process.exit());
